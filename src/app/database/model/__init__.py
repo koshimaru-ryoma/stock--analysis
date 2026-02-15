@@ -12,6 +12,6 @@ Example:
 
 """
 
-from .hero import Hero
+from .stock_price_1m import StockPrice1m
 
-__all__ = ["Hero"]
+__all__ = ["StockPrice1m"]
