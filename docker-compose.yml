@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./containers/api/Dockerfile
+      target: local
+    working_dir: /src
+    volumes:
+      # ソース（pyproject.toml / uv.lock もここに含める）
+      - ./src:/src
+
+      # uv のダウンロード/解決キャッシュ（速度改善）
+      - uv-cache:/root/.cache/uv
+    env_file:
+      - ./containers/api/api.env
+    ports:
+      - "9999:8000"
+      - "5678:5678"  # debugpy port
+
+  postgres:
+    image: postgres:17
+    volumes:
+      - ./containers/postgres/volumes/:/var/lib/postgresql/data
+    env_file:
+      - ./containers/postgres/db.env
+    ports:
+      - "15432:5432"
+
+volumes:
+  uv-cache:

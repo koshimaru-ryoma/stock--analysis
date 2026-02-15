@@ -1,0 +1,66 @@
+name: Lint & Type Check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Type Check (Changed Files)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed Python files
+        id: changed-files
+        uses: step-security/changed-files@v46
+        with:
+          files: |
+            **/*.py
+          path: src
+
+      - name: Set up Python
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "src/uv.lock"
+
+      - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        working-directory: src
+        run: uv sync --frozen --group dev
+
+      - name: Run Ruff linter
+        if: steps.changed-files.outputs.any_changed == 'true'
+        working-directory: src
+        run: uv run ruff check --output-format=github ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: Run Ruff format check
+        if: steps.changed-files.outputs.any_changed == 'true'
+        working-directory: src
+        run: uv run ruff format --check ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: Run Mypy
+        if: steps.changed-files.outputs.any_changed == 'true'
+        working-directory: src
+        run: uv run mypy ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: No Python files changed
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: echo "No Python files changed, skipping lint checks"
