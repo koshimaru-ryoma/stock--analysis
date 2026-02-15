@@ -1,0 +1,38 @@
+line-length = 80
+target-version = "py314"
+extend-exclude = ["**/migration/**", "dist", "build", "node_modules"]
+
+# --- Lint: 実害系 + FastAPI 向けだけを有効化 ---
+[lint]
+select = [
+    "D",    # pydocstyle（docstringのスタイルチェック）
+    "F",    # Pyflakes（未使用/未定義）
+    "I",    # import 並べ替え（isort 相当）
+    "UP",   # pyupgrade（最新構文へ）
+    "B",    # bugbear（バグ誘発パターン）
+    "C4",   # 内包表記の最適化
+    "RUF",  # Ruff 独自
+    "FAST", # ← FastAPI 向けルール（Annotated 推奨など）
+]
+
+ignore = [
+    "D100", # モジュールの docstring チェックを無効化
+    "D107", # __init__.py の docstring チェックを無効化
+    "D203", # クラス定義前に空行1行を要求（D211と競合するため無効化）
+    "D213", # docstring要約を2行目に要求（D212と競合するため無効化）
+    "D400", # docstringのピリオドを無効化
+    "D415", # docstringの最終行に空行を要求しない
+]
+
+# bugbear の "immutable call" 例外に FastAPI の Depends を追加（B008対策）
+# ※ 公式Issueでも fastapi.Depends を追加する運用が紹介されています
+[lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends"]  # B008 回避用
+
+# --- Formatter: ruff format ---
+[format]
+quote-style = "double"      # Black互換。好みで "preserve" でもOK
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

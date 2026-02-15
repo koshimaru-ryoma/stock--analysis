@@ -9,6 +9,8 @@
     "python.pythonPath": "/.venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "mypy-type-checker.importStrategy": "fromEnvironment",
+    "mypy-type-checker.cwd": "${workspaceFolder}/src",
+    "ruff.cwd": "${workspaceFolder}/src",
     "[python]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
