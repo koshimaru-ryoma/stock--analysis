@@ -3,7 +3,7 @@
 ############################
 # base
 ############################
-FROM python:3.13-slim-bookworm AS base
+FROM python:3.14-slim-bookworm AS base
 SHELL ["sh", "-exc"]
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -32,7 +32,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.8.17 /uv /uvx /bin/
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
-    UV_PYTHON=python3.13 \
+    UV_PYTHON=python3.14 \
     UV_PROJECT_ENVIRONMENT=/.venv
 
 # 依存だけ先に（キャッシュ効かせる）
@@ -55,7 +55,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.8.17 /uv /uvx /bin/
 ENV UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
-    UV_PYTHON=python3.13 \
+    UV_PYTHON=python3.14 \
     UV_PROJECT_ENVIRONMENT=/.venv \
     PATH="/.venv/bin:$PATH" \
     ENVIRONMENT=local

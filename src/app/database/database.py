@@ -10,7 +10,9 @@ from app.settings.settings import get_settings
 settings = get_settings()
 postgres_driver_url = settings.postgres_driver_url
 
-async_engine = create_async_engine(url=postgres_driver_url, echo=settings.sql_log)
+async_engine = create_async_engine(
+    url=postgres_driver_url, echo=settings.sql_log
+)
 
 
 async def get_async_db_session() -> AsyncGenerator[AsyncSession]:

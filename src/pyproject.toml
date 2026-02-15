@@ -2,7 +2,7 @@
 name = "app"
 version = "0.1.0"
 description = "Add your description here"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "asyncpg>=0.30.0",
     "alembic>=1.18.1",
@@ -20,8 +20,9 @@ dev = [
 ]
 
 [tool.ruff]
-target-version = "py313"
-extend-exclude = ["app/migration", "dist", "build", "node_modules"]
+line-length = 80
+target-version = "py314"
+extend-exclude = ["**/migration/**", "dist", "build", "node_modules"]
 
 # --- Lint: 実害系 + FastAPI 向けだけを有効化 ---
 [tool.ruff.lint]
@@ -60,15 +61,12 @@ docstring-code-line-length = "dynamic"
 
 # --- Type Check: mypy (strict mode) ---
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 
-# 除外ディレクトリ
-exclude = [
-    "app/migration",
-    "build",
-    "dist",
-]
+# 除外ディレクトリ（正規表現パターンで指定）
+# migration ディレクトリ以下のすべてのファイルを除外
+exclude = "^(.*/)?(migration|build|dist)/"
 
 # Pydantic plugin
 plugins = ["pydantic.mypy"]
