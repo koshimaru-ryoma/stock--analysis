@@ -20,6 +20,10 @@ class Settings(BaseSettings):
         postgres_password: PostgreSQLパスワード
         postgres_database: PostgreSQLデータベース名
         sql_log: SQLログの出力有無(デフォルト: False)
+        batch_lookback_days: バッチで取得する過去日数
+        batch_max_retries: データ取得時の最大リトライ回数
+        batch_retry_delay_seconds: リトライ時の待機秒数
+        batch_log_level: バッチ実行時のログレベル
 
     """
 
@@ -32,6 +36,10 @@ class Settings(BaseSettings):
     postgres_database: str
 
     sql_log: bool = False
+    batch_lookback_days: int = 7
+    batch_max_retries: int = 3
+    batch_retry_delay_seconds: int = 5
+    batch_log_level: str = "INFO"
 
     @computed_field  # type: ignore[prop-decorator]
     @property

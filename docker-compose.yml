@@ -21,6 +21,7 @@ services:
     image: postgres:17
     volumes:
       - ./containers/postgres/volumes/:/var/lib/postgresql/data
+    command: ["postgres", "-c", "timezone=Asia/Tokyo", "-c", "log_timezone=Asia/Tokyo"]
     env_file:
       - ./containers/postgres/db.env
     ports:

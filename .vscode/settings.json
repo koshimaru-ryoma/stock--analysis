@@ -10,6 +10,9 @@
     "python.terminal.activateEnvironment": true,
     "mypy-type-checker.importStrategy": "fromEnvironment",
     "mypy-type-checker.cwd": "${workspaceFolder}/src",
+    "mypy-type-checker.args": [
+             "--config-file=.mypy.ini"
+    ],
     "ruff.cwd": "${workspaceFolder}/src",
     "[python]": {
         "editor.formatOnSave": true,

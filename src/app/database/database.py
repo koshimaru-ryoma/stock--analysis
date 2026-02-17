@@ -11,7 +11,9 @@ settings = get_settings()
 postgres_driver_url = settings.postgres_driver_url
 
 async_engine = create_async_engine(
-    url=postgres_driver_url, echo=settings.sql_log
+    url=postgres_driver_url,
+    echo=settings.sql_log,
+    connect_args={"server_settings": {"timezone": "Asia/Tokyo"}},
 )
 
 

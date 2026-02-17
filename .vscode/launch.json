@@ -16,6 +16,15 @@
         }
       ],
       "justMyCode": false
+    },
+    {
+      "name": "Batch: fetch_stock_prices",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app.batch.fetch_stock_prices",
+      "cwd": "${workspaceFolder}/src",
+      "args": ["--ticker", "8001.T", "--days", "7", "--dry-run"],
+      "justMyCode": false
     }
   ]
 }
