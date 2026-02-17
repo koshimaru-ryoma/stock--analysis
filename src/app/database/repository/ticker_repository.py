@@ -60,9 +60,7 @@ class TickerRepository:
 
 
 async def get_ticker_repository(
-    session: Annotated[
-        AsyncSession, Depends(get_async_db_session)
-    ],
+    session: Annotated[AsyncSession, Depends(get_async_db_session)],
 ) -> TickerRepository:
     """FastAPI DI用のTickerRepositoryファクトリ.
 
