@@ -13,5 +13,6 @@ Example:
 """
 
 from .stock_price_1m import StockPrice1m
+from .ticker import Ticker
 
-__all__ = ["StockPrice1m"]
+__all__ = ["StockPrice1m", "Ticker"]
