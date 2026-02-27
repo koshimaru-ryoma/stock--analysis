@@ -11,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import col
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.common.log_prefix import INSERT_STOCK_DATA
+from app.common.log_prefix import LogPrefix
 from app.database.database import get_async_db_session
 from app.database.model.stock_price_1m import StockPrice1m
 
@@ -197,7 +197,7 @@ class StockPrice1mRepository:
         orig = getattr(error, "orig", None)
         diag = getattr(orig, "diag", None)
         logger.error(
-            f"{INSERT_STOCK_DATA} error context=%s sql=%s params=%s "
+            f"{LogPrefix.INSERT_STOCK_DATA} error context=%s sql=%s params=%s "
             "sqlstate=%s detail=%s message=%s",
             context,
             sql,

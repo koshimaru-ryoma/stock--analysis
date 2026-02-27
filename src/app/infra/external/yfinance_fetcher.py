@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 import yfinance as yf
 
-from app.common.log_prefix import FETCH_STOCK_DATA
+from app.common.log_prefix import LogPrefix
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class YFinanceFetcher:
         for attempt in range(1, self.max_retries + 1):
             try:
                 logger.info(
-                    f"{FETCH_STOCK_DATA} {ticker} "
+                    f"{LogPrefix.FETCH_STOCK_DATA} {ticker} "
                     f"interval=1m start={start} end={end} "
                     f"(attempt {attempt}/{self.max_retries})"
                 )

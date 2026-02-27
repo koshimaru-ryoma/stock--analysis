@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from fastapi import Depends
 
-from app.common.log_prefix import IMPORT_STOCK_DATA
+from app.common.log_prefix import LogPrefix
 from app.database.model.stock_price_1m import StockPrice1m
 from app.database.model.ticker import Ticker
 from app.database.repository.stock_price_1m_repository import (
@@ -168,7 +168,7 @@ class StockPriceService:
                 )
                 total_imported += imported_count
                 logger.info(
-                    f"{IMPORT_STOCK_DATA} {ticker_symbol}: "
+                    f"{LogPrefix.IMPORT_STOCK_DATA} {ticker_symbol}: "
                     f"imported {imported_count} records "
                     f"for range {range_start} to {range_end}"
                 )

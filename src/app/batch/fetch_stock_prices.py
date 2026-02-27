@@ -11,7 +11,7 @@ from typing import Annotated
 import typer
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.common.log_prefix import BATCH_JOB
+from app.common.log_prefix import LogPrefix
 from app.database.database import async_engine
 from app.database.repository import (
     StockPrice1mRepository,
@@ -70,7 +70,7 @@ async def fetch_stock_prices(
 
     """
     logger.info(
-        f"{BATCH_JOB} Starting with days={days}, "
+        f"{LogPrefix.BATCH_JOB} Starting with days={days}, "
         f"ticker={ticker}, dry_run={dry_run}"
     )
 
@@ -91,7 +91,7 @@ async def fetch_stock_prices(
             dry_run=dry_run,
         )
 
-    logger.info(f"{BATCH_JOB} Completed")
+    logger.info(f"{LogPrefix.BATCH_JOB} Completed")
 
 
 if __name__ == "__main__":
