@@ -22,7 +22,9 @@
       "Bash(python -m ruff check:*)",
       "Bash(python -m ruff format:*)",
       "Bash(python -m mypy:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(uv run ruff check .)",
+      "Bash(uv run mypy app)"
     ]
   }
 }

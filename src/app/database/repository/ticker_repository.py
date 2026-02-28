@@ -31,7 +31,7 @@ class TickerRepository:
         self.session = session
 
     async def get_all(self) -> Sequence[Ticker]:
-        """全銘柄をDBから取得（is_active 問わず）.
+        """全銘柄をDBから取得(is_active 問わず).
 
         Returns
         -------
