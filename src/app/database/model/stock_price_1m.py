@@ -14,7 +14,7 @@ class StockPrice1m(SQLModel, table=True):
     ----------
         id: 自動採番ID(主キー)
         ticker: 銘柄コード (例: 8001.T)
-        datetime: 日時 (例: 2024-02-15 09:00:00+09)
+        price_datetime: 日時 (例: 2024-02-15 09:00:00+09)
         open: 始値 (例: 4500.00)
         high: 高値 (例: 4510.00)
         low: 安値 (例: 4495.00)
@@ -27,7 +27,9 @@ class StockPrice1m(SQLModel, table=True):
     __tablename__ = "stock_prices_1m"
     __table_args__ = (
         UniqueConstraint(
-            "ticker", "datetime", name="uq_stock_prices_1m_ticker_datetime"
+            "ticker",
+            "price_datetime",
+            name="uq_stock_prices_1m_ticker_price_datetime",
         ),
     )
 
@@ -39,10 +41,8 @@ class StockPrice1m(SQLModel, table=True):
         max_length=20,
         index=True,
     )
-    dt: datetime = Field(
-        sa_column=Column(
-            "datetime", DateTime(timezone=True), nullable=False, index=True
-        ),
+    price_datetime: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False, index=True),
     )
     open: Decimal = Field(
         max_digits=10,

@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run ruff:*)",
+      "Bash(uv run mypy:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(alembic revision:*)",
+      "Bash(git -C /workspace show HEAD:src/app/database/model/hero.py)",
+      "Bash(git -C /workspace log --oneline --all)",
+      "Bash(git -C /workspace show 74847df:src/app/database/model/hero.py)",
+      "Bash(git -C /workspace log --all --full-history -- \"src/app/database/model/hero.py\" --format=\"%H %s\")",
+      "Bash(git -C /workspace show 08cca74:src/app/database/model/hero.py)",
+      "Bash(git -C /workspace show 08cca74:src/app/main.py)",
+      "Bash(git push:*)",
+      "Bash(ruff check:*)",
+      "Bash(mypy:*)",
+      "Bash(python -m ruff check:*)",
+      "Bash(python -m ruff format:*)",
+      "Bash(python -m mypy:*)",
+      "Bash(git status:*)"
+    ]
+  }
+}
