@@ -30,6 +30,17 @@ class TickerRepository:
         """
         self.session = session
 
+    async def get_all(self) -> Sequence[Ticker]:
+        """全銘柄をDBから取得(is_active 問わず).
+
+        Returns
+        -------
+            Tickerオブジェクトのリスト
+
+        """
+        result = await self.session.exec(select(Ticker))
+        return result.all()
+
     async def get_active_tickers(
         self,
         specific_ticker: str | None = None,
