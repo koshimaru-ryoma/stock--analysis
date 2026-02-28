@@ -7,8 +7,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.database.database import get_async_db_session
 from app.settings.settings import Settings, get_settings
+from app.ticker.router import router as ticker_router
 
 app = FastAPI()
+app.include_router(ticker_router)
 
 
 @app.get("/")
