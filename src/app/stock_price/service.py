@@ -118,6 +118,10 @@ class StockPriceService:
 
         """
         ticker_symbol = ticker_obj.ticker
+        ticker_id = ticker_obj.id
+        if ticker_id is None:
+            logger.error(f"{ticker_symbol}: ticker id is missing, skipping")
+            return 0
         logger.info(f"Processing {ticker_symbol}...")
 
         end_date = datetime.now(JST)
@@ -126,7 +130,7 @@ class StockPriceService:
         )
 
         missing_ranges = await self._get_missing_ranges(
-            ticker_symbol, start_date, end_date
+            ticker_id, ticker_symbol, start_date, end_date
         )
 
         if not missing_ranges:
@@ -163,7 +167,8 @@ class StockPriceService:
                     continue
 
                 imported_count = await self._import_price_data(
-                    ticker=ticker_symbol,
+                    ticker_id=ticker_id,
+                    ticker_symbol=ticker_symbol,
                     df=df,
                 )
                 total_imported += imported_count
@@ -190,7 +195,8 @@ class StockPriceService:
 
     async def _get_missing_ranges(
         self,
-        ticker: str,
+        ticker_id: int,
+        ticker_symbol: str,
         start_date: datetime,
         end_date: datetime,
     ) -> list[tuple[datetime, datetime]]:
@@ -201,7 +207,8 @@ class StockPriceService:
 
         Args:
         ----
-            ticker: 銘柄コード
+            ticker_id: 銘柄ID
+            ticker_symbol: 銘柄コード
             start_date: 開始日時
             end_date: 終了日時
 
@@ -211,7 +218,7 @@ class StockPriceService:
 
         """
         existing_ranges = await self.price_repo.get_date_ranges(
-            ticker=ticker,
+            ticker_id=ticker_id,
             start_date=start_date,
             end_date=end_date,
         )
@@ -226,7 +233,7 @@ class StockPriceService:
                 complete_dates.add(min_dt.date())
             else:
                 logger.info(
-                    f"{ticker}: {min_dt.date()} has only {count} records "
+                    f"{ticker_symbol}: {min_dt.date()} has only {count} records "
                     f"(threshold={MIN_RECORDS_PER_DAY}), will re-fetch"
                 )
 
@@ -264,14 +271,16 @@ class StockPriceService:
 
     async def _import_price_data(
         self,
-        ticker: str,
+        ticker_id: int,
+        ticker_symbol: str,
         df: pd.DataFrame,
     ) -> int:
         """DataFrameから株価データをDBに一括登録.
 
         Args:
         ----
-            ticker: 銘柄コード
+            ticker_id: 銘柄ID
+            ticker_symbol: 銘柄コード
             df: 株価データのDataFrame (index=datetime)
 
         Returns:
@@ -280,13 +289,15 @@ class StockPriceService:
 
         """
         if df.empty:
-            logger.warning(f"{ticker}: empty DataFrame, nothing to import")
+            logger.warning(
+                f"{ticker_symbol}: empty DataFrame, nothing to import"
+            )
             return 0
 
         records = []
         for dt, row in df.iterrows():
             record = StockPrice1m(
-                ticker=ticker,
+                ticker_id=ticker_id,
                 price_datetime=dt,
                 open=Decimal(str(row["open"])),
                 high=Decimal(str(row["high"])),
