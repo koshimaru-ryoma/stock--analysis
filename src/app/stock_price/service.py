@@ -120,9 +120,7 @@ class StockPriceService:
         ticker_symbol = ticker_obj.ticker
         ticker_id = ticker_obj.id
         if ticker_id is None:
-            logger.error(
-                f"{ticker_symbol}: ticker id is missing, skipping"
-            )
+            logger.error(f"{ticker_symbol}: ticker id is missing, skipping")
             return 0
         logger.info(f"Processing {ticker_symbol}...")
 
