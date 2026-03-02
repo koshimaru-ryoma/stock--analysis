@@ -39,7 +39,7 @@ class StockPrice1mRepository:
 
     async def get_date_ranges(
         self,
-        ticker: str,
+        ticker_id: int,
         start_date: datetime,
         end_date: datetime,
     ) -> list[tuple[datetime, datetime, int]]:
@@ -47,7 +47,7 @@ class StockPrice1mRepository:
 
         Args:
         ----
-            ticker: 銘柄コード
+            ticker_id: 銘柄ID
             start_date: 開始日時
             end_date: 終了日時
 
@@ -64,7 +64,7 @@ class StockPrice1mRepository:
                 func.count().label("count"),
             )
             .where(
-                col(StockPrice1m.ticker) == ticker,
+                col(StockPrice1m.ticker_id) == ticker_id,
                 col(StockPrice1m.price_datetime) >= start_date,
                 col(StockPrice1m.price_datetime) <= end_date,
             )
@@ -124,7 +124,7 @@ class StockPrice1mRepository:
     def _to_insert_row(self, record: StockPrice1m) -> dict[str, Any]:
         """StockPrice1mモデルをINSERT用辞書へ変換."""
         return {
-            "ticker": record.ticker,
+            "ticker_id": record.ticker_id,
             "price_datetime": record.price_datetime,
             "open": record.open,
             "high": record.high,
@@ -146,7 +146,7 @@ class StockPrice1mRepository:
             pg_insert(table)
             .values(rows)
             .on_conflict_do_nothing(
-                index_elements=[table.c.ticker, table.c.price_datetime]
+                index_elements=[table.c.ticker_id, table.c.price_datetime]
             )
         )
         if with_returning:

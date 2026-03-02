@@ -3,7 +3,13 @@
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from sqlalchemy import BigInteger, Column, DateTime, UniqueConstraint
+from sqlalchemy import (
+    BigInteger,
+    Column,
+    DateTime,
+    ForeignKey,
+    UniqueConstraint,
+)
 from sqlmodel import Field, SQLModel
 
 
@@ -13,7 +19,7 @@ class StockPrice1m(SQLModel, table=True):
     Attributes
     ----------
         id: 自動採番ID(主キー)
-        ticker: 銘柄コード (例: 8001.T)
+        ticker_id: 銘柄ID (tickers.id)
         price_datetime: 日時 (例: 2024-02-15 09:00:00+09)
         open: 始値 (例: 4500.00)
         high: 高値 (例: 4510.00)
@@ -27,9 +33,9 @@ class StockPrice1m(SQLModel, table=True):
     __tablename__ = "stock_prices_1m"
     __table_args__ = (
         UniqueConstraint(
-            "ticker",
+            "ticker_id",
             "price_datetime",
-            name="uq_stock_prices_1m_ticker_price_datetime",
+            name="uq_stock_prices_1m_ticker_id_price_datetime",
         ),
     )
 
@@ -37,9 +43,13 @@ class StockPrice1m(SQLModel, table=True):
         default=None,
         sa_column=Column(BigInteger, primary_key=True, autoincrement=True),
     )
-    ticker: str = Field(
-        max_length=20,
-        index=True,
+    ticker_id: int = Field(
+        sa_column=Column(
+            BigInteger,
+            ForeignKey("tickers.id"),
+            nullable=False,
+            index=True,
+        ),
     )
     price_datetime: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False, index=True),
