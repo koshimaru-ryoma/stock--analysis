@@ -3,14 +3,25 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.database.database import get_async_db_session
+from app.exceptions.handlers import register_exception_handlers
 from app.settings.settings import Settings, get_settings
+from app.stock_price.router import router as stock_price_router
 from app.ticker.router import router as ticker_router
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_settings().cors_allow_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+register_exception_handlers(app)
 app.include_router(ticker_router)
+app.include_router(stock_price_router)
 
 
 @app.get("/")
