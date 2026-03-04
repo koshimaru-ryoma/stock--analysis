@@ -27,7 +27,5 @@ class StockPriceQuery(BaseModel):
             and self.end_date is not None
             and self.start_date > self.end_date
         ):
-            raise ValueError(
-                "start_date must be before or equal to end_date"
-            )
+            raise ValueError("start_date must be before or equal to end_date")
         return self
