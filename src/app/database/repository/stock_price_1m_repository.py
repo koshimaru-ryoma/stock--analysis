@@ -1,14 +1,15 @@
 """StockPrice1mテーブルのリポジトリモジュール."""
 
 import logging
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Any, cast
+from zoneinfo import ZoneInfo
 
 from fastapi import Depends
-from sqlalchemy import func, select
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import col
+from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.common.log_prefix import LogPrefix
@@ -72,10 +73,51 @@ class StockPrice1mRepository:
             .order_by("date")
         )
 
-        result = await self.session.exec(stmt)  # type: ignore[call-overload]
-        rows = result.all()
+        result = await self.session.exec(stmt)
+        # SQLModelのfunc集計関数はスタブが不正確なためmypyが行型を誤推論する。
+        # Any経由にすることで属性アクセス(.min_dt/.max_dt/.count)を許容する。
+        rows: list[Any] = list(result.all())
 
         return [(row.min_dt, row.max_dt, row.count) for row in rows]
+
+    async def get_by_ticker_ids_and_date_range(
+        self,
+        ticker_ids: list[int],
+        start_date: date,
+        end_date: date,
+    ) -> list[StockPrice1m]:
+        """指定銘柄IDと日付範囲の1分足データを取得.
+
+        Args:
+        ----
+            ticker_ids: 銘柄IDのリスト
+            start_date: 開始日付(当日を含む)
+            end_date: 終了日付(当日を含む)
+
+        Returns:
+        -------
+            StockPrice1mオブジェクトのリスト(ticker_id, price_datetime順)
+
+        """
+        jst = ZoneInfo("Asia/Tokyo")
+        start_dt = datetime.combine(start_date, datetime.min.time(), tzinfo=jst)
+        end_dt = datetime.combine(end_date, datetime.max.time(), tzinfo=jst)
+
+        stmt = (
+            select(StockPrice1m)
+            .where(
+                col(StockPrice1m.ticker_id).in_(ticker_ids),
+                col(StockPrice1m.price_datetime) >= start_dt,
+                col(StockPrice1m.price_datetime) <= end_dt,
+            )
+            .order_by(
+                col(StockPrice1m.ticker_id),
+                col(StockPrice1m.price_datetime),
+            )
+        )
+
+        result = await self.session.exec(stmt)
+        return list(result.all())
 
     async def bulk_insert(
         self,

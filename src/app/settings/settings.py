@@ -24,6 +24,7 @@ class Settings(BaseSettings):
         batch_max_retries: データ取得時の最大リトライ回数
         batch_retry_delay_seconds: リトライ時の待機秒数
         batch_log_level: バッチ実行時のログレベル
+        cors_allow_origins: CORSで許可するオリジンのリスト
 
     """
 
@@ -34,6 +35,8 @@ class Settings(BaseSettings):
     postgres_user: str
     postgres_password: str
     postgres_database: str
+
+    cors_allow_origins: list[str] = []
 
     sql_log: bool = False
     batch_lookback_days: int = 7

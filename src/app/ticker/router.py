@@ -8,7 +8,7 @@ from app.database.repository.ticker_repository import (
     TickerRepository,
     get_ticker_repository,
 )
-from app.ticker.schema import TickerResponse
+from app.ticker.schema.ticker import TickerResponse
 
 router = APIRouter(prefix="/tickers", tags=["tickers"])
 

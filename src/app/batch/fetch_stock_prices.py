@@ -13,10 +13,10 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.common.log_prefix import LogPrefix
 from app.database.database import async_engine
-from app.database.repository import (
+from app.database.repository.stock_price_1m_repository import (
     StockPrice1mRepository,
-    TickerRepository,
 )
+from app.database.repository.ticker_repository import TickerRepository
 from app.infra.external.yfinance_fetcher import YFinanceFetcher
 from app.settings.settings import get_settings
 from app.stock_price.service import StockPriceService
