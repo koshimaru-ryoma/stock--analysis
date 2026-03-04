@@ -41,6 +41,23 @@ class TickerRepository:
         result = await self.session.exec(select(Ticker))
         return result.all()
 
+    async def get_by_ids(self, ids: list[int]) -> Sequence[Ticker]:
+        """指定IDの銘柄をDBから取得.
+
+        Args:
+        ----
+            ids: 取得する銘柄IDのリスト
+
+        Returns:
+        -------
+            Tickerオブジェクトのリスト
+
+        """
+        result = await self.session.exec(
+            select(Ticker).where(col(Ticker.id).in_(ids))
+        )
+        return result.all()
+
     async def get_active_tickers(
         self,
         specific_ticker: str | None = None,
