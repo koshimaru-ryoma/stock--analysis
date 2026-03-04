@@ -20,7 +20,12 @@ from app.database.repository.ticker_repository import (
     TickerRepository,
     get_ticker_repository,
 )
-from app.stock_price.protocol import StockDataFetcher
+from app.exceptions.not_found import NotFoundError
+from app.stock_price.protocol.stock_data_fetcher import StockDataFetcher
+from app.stock_price.schema.dto.stock_price_data_point import (
+    StockPriceDataPoint,
+)
+from app.stock_price.schema.response.ticker_price_data import TickerPriceData
 
 JST = ZoneInfo("Asia/Tokyo")
 
@@ -58,6 +63,57 @@ class StockPriceService:
         self.price_repo = price_repo
 
     # --- パブリックメソッド ---
+
+    async def get_ticker_price_data(
+        self,
+        ticker_ids: list[int],
+        start_date: date | None = None,
+        end_date: date | None = None,
+    ) -> list[TickerPriceData]:
+        """指定銘柄・日付範囲の1分足株価データを取得.
+
+        Args:
+        ----
+            ticker_ids: 銘柄IDのリスト
+            start_date: 開始日付(省略時はend_dateの1週間前)
+            end_date: 終了日付(省略時は今日)
+
+        Returns:
+        -------
+            銘柄ごとの1分足データのリスト
+
+        """
+        resolved_end = end_date or datetime.now(JST).date()
+        resolved_start = start_date or (resolved_end - timedelta(weeks=1))
+
+        tickers = await self.ticker_repo.get_by_ids(ticker_ids)
+        ticker_map = {t.id: t for t in tickers if t.id is not None}
+
+        missing_ids = [tid for tid in ticker_ids if tid not in ticker_map]
+        if missing_ids:
+            raise NotFoundError(field="ticker_ids", value=missing_ids)
+
+        records = await self.price_repo.get_by_ticker_ids_and_date_range(
+            ticker_ids, resolved_start, resolved_end
+        )
+
+        grouped: dict[int, list[StockPriceDataPoint]] = {
+            tid: [] for tid in ticker_ids
+        }
+        for record in records:
+            grouped[record.ticker_id].append(
+                StockPriceDataPoint.model_validate(record)
+            )
+
+        return [
+            TickerPriceData(
+                ticker_id=tid,
+                ticker=ticker_map[tid].ticker,
+                name=ticker_map[tid].name,
+                data=grouped[tid],
+            )
+            for tid in ticker_ids
+        ]
 
     async def process_all_tickers(
         self,
