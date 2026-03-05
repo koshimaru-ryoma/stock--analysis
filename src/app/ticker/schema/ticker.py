@@ -10,6 +10,7 @@ class TickerResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     ticker: str
     name: str | None
     is_active: bool

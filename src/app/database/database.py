@@ -2,7 +2,7 @@
 
 from collections.abc import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.settings.settings import get_settings
@@ -14,6 +14,12 @@ async_engine = create_async_engine(
     url=postgres_driver_url,
     echo=settings.sql_log,
     connect_args={"server_settings": {"timezone": "Asia/Tokyo"}},
+)
+
+AsyncSessionFactory = async_sessionmaker(
+    bind=async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
 )
 
 
@@ -28,5 +34,5 @@ async def get_async_db_session() -> AsyncGenerator[AsyncSession]:
         AsyncSession: 非同期データベースセッション
 
     """
-    async with AsyncSession(async_engine) as session:
+    async with AsyncSessionFactory() as session:
         yield session
