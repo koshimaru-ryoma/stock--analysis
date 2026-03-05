@@ -9,10 +9,9 @@ import logging
 from typing import Annotated
 
 import typer
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.common.log_prefix import LogPrefix
-from app.database.database import async_engine
+from app.database.database import AsyncSessionFactory
 from app.database.repository.stock_price_1m_repository import (
     StockPrice1mRepository,
 )
@@ -74,7 +73,7 @@ async def fetch_stock_prices(
         f"ticker={ticker}, dry_run={dry_run}"
     )
 
-    async with AsyncSession(async_engine) as session:
+    async with AsyncSessionFactory() as session:
         service = StockPriceService(
             ticker_repo=TickerRepository(session),
             price_repo=StockPrice1mRepository(session),
